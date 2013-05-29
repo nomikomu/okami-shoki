@@ -13,9 +13,14 @@ from pyglet.window import mouse
 
 class Config:
   def __init__(self,scrnn_x=600,scrnn_y=400,depth=24):
-    
-    on_resize(self.scrnn_x,self.scrnn_y)
-    depth_size(self.depth)
+
+   on_resize(self.scrnn_x,self.scrnn_y)
+      #glViewport(0,0,scrnn_x,scrnn_y)
+      #glMatrixMode(gl.GL_PROJECTION)
+      #glLoadIdentity()
+      #glOrtho(0,scrnn_x, 0,scrnn_y, -1,1)
+      
+   depth_size(self.depth)
 
   def get_gl_atrributes():
     return self
@@ -79,6 +84,11 @@ def on_draw():
   label.draw()
   
 music.play()
+
+#pyglet.options['debug_gl']=False
+#increased performance /no error checking
+
 pyglet.app.run()
+
 
 
