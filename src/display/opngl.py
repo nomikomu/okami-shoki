@@ -1,5 +1,13 @@
 import pyglet as pygl
 from pyglet.gl import *
+from pyglet.window import key
+from pyglet.window import mouse
+"""
+  TODO:
+    
+
+
+"""
 
 win = pygl.window.Window()
 label = pyglet.text.Label('DZA WARLDO',
@@ -8,14 +16,22 @@ label = pyglet.text.Label('DZA WARLDO',
                           x=win.width//2,y=win.height//2,
                           anchor_x='center', anchor_y='center')
 image = pyglet.resource.image('test.png')
+
+# Input for window > key, mouse etc.
 @win.event
 def on_key_press(symbol, modifiers):
   print 'key_pressed'
   #incl. pressed key name:
   #print 'key_pressed_{key}.format(symbol)
   #problem: can't get symbol this way ;(
+  if symbol == key.A:
+    print '--A_key_press'
+  elif symbol == key.LEFT:
+    print '--LEFT_key_press'
+  elif symbol == key.ENTER:
+    print '--ENTER_key_press'
 
-
+# Printing to window
 @win.event
 def on_draw():
 
