@@ -12,9 +12,11 @@ from pyglet.window import mouse
 """
 
 class Config:
-  def __init__(self,scrnn_x,scrnn_y,buff_size):
+  def __init__(self,scrnn_x=600,scrnn_y=400,depth=24):
+    
     on_resize(self.scrnn_x,self.scrnn_y)
-    buffer_size=self.buff_size
+    depth_size(self.depth)
+
   def get_gl_atrributes():
     return self
   def is_complete():
