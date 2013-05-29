@@ -9,6 +9,14 @@ label = pyglet.text.Label('DZA WARLDO',
                           anchor_x='center', anchor_y='center')
 image = pyglet.resource.image('test.png')
 @win.event
+def on_key_press(symbol, modifiers):
+  print 'key_pressed'
+  #incl. pressed key name:
+  #print 'key_pressed_{key}.format(symbol)
+  #problem: can't get symbol this way ;(
+
+
+@win.event
 def on_draw():
 
   glClear(GL_COLOR_BUFFER_BIT)
