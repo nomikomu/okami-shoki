@@ -44,8 +44,8 @@ label = pyglet.text.Label('DZA WARLDO',
                           font_size=36,
                           x=win.width//2,y=win.height//2,
                           anchor_x='center', anchor_y='center')
-image = pygl.resource.image('test.png')
-music = pygl.resource.media('test_battlelolis.mp3')
+image = pygl.resource.image('test/test.png')
+music = pygl.resource.media('test/test_battlelolis.mp3')
 
 # Input for window > key, mouse etc.
 @win.event
