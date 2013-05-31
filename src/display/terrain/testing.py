@@ -1,8 +1,8 @@
 #############################################################################
 #####   Import code and set gamelogic
 
-import GameLogic
-cont = GameLogic.getCurrentController()
+from bge import logic
+cont = logic.getCurrentController()
 own = cont.owner
 mesh = own.meshes[0]
 
@@ -100,7 +100,6 @@ def river_maker_2(m):
 	while count < points:
 		if error >12000:
 			count = 100
-			print('error')
 		
 		elif r_point[0] == p_list[count][0] and r_point[1] == p_list[count][1]:
 			count +=1
@@ -145,6 +144,7 @@ def wrap(v,max):
 		v = v 
 	return v
 
+
 ##############################################################################		
 #####  blending
 
@@ -153,6 +153,112 @@ def vert_blend(m):
 	n = [[[0.0,[0.5,0.5,0.5,1.0]] for i in range(own['verts'])] for i in range(own['verts'])]
 	
 		
+	for x in range(0,own['verts']):
+		for y in range(0,own['verts']):
+						
+			list = []
+			
+			list.append(m[x][wrap(y,own['verts'])][0]) 
+			list.append(m[wrap(x,own['verts'])][y][0])
+			list.append(m[wrap(x,own['verts'])][wrap(y,own['verts'])][0])
+			list.append(m[x-1][y][0])
+			list.append(m[wrap(x,own['verts'])][y-1][0])
+			list.append(m[x-1][wrap(y,own['verts'])][0])
+			list.append(m[x][y-1][0])
+			list.append(m[x-1][y-1][0])
+			
+			total = 0
+			
+			for ob in list:
+				total += ob 
+				
+			n[x][y][0] = (0.125) * total
+				
+	for x in range(0,own['verts']):
+		for y in range(0,own['verts']): 
+			m[x][y][0] = n[x][y][0]
+	
+	return m		
+
+#####################################################
+###### colour blending
+
+def col_blend(m,rgb):
+
+	n = [[[0.0,[0.5,0.5,0.5,1.0]] for i in range(own['verts'])] for i in range(own['verts'])]
+	
+		
+	for x in range(0,own['verts']):
+		for y in range(0,own['verts']):
+									
+			list = []
+			
+			list.append(m[x][wrap(y,own['verts'])][1][rgb]) 
+			list.append(m[wrap(x,own['verts'])][y][1][rgb])
+			list.append(m[wrap(x,own['verts'])][wrap(y,own['verts'])][1][rgb])
+			list.append(m[x-1][y][1][rgb])
+			list.append(m[wrap(x,own['verts'])][y-1][1][rgb])
+			list.append(m[x-1][wrap(y,own['verts'])][1][rgb])
+			list.append(m[x][y-1][1][rgb])
+			list.append(m[x-1][y-1][1][rgb])
+			
+			total = 0
+			
+			for ob in list:
+				total += ob 
+			
+			n[x][y][1][rgb] = (0.125) * total
+			
+	for x in range(0,own['verts']):
+		for y in range(0,own['verts']): 
+			m[x][y][1][rgb] = n[x][y][1][rgb]
+	
+	return m	
+
+##############################################################################		
+#####   adds steps or terraces to highest points
+
+def terrace(m):
+	
+	n = [[[0.0,[0.5,0.5,0.5,1.0]] for i in range(own['verts'])] for i in range(own['verts'])]
+	
+	
+	highest = - 1000.0
+	lowest = 1000.0
+	
+	
+	for x in range(0,own['verts']):
+		for y in range(0,own['verts']):
+			if m[x][y][0] < lowest:
+				lowest = m[x][y][0]
+			if m[x][y][0] > highest:
+				highest = m[x][y][0]
+	
+	dif = highest - lowest
+	
+	mid_point = lowest + (dif* own['t_point'])
+				
+		
+	for x in range(0,own['verts']):
+		for y in range(0,own['verts']):
+			if m[x][y][0] > mid_point:
+				n[x][y][0] = m[x][y][0]* own['t_amount']
+				m[x][y][1][2] = 1.0
+			else:
+				n[x][y][0] = m[x][y][0]
+					
+	for x in range(0,own['verts']):
+		for y in range(0,own['verts']): 
+			m[x][y][0] = n[x][y][0]
+		
+	return m
+	
+
+#########################################################################
+###### code for finding slopes and coloring them
+
+def slopes(m):
+	
 	for x in range(0,own['verts']):
 		for y in range(0,own['verts']):
 						
@@ -168,38 +274,23 @@ def vert_blend(m):
 			list.append(m[x][y-1][0])
 			list.append(m[x-1][y-1][0])
 			
-			total = 0
+			highest = - 1000.0
+			lowest = 1000.0
 			
 			for ob in list:
-				total += ob 
+				if ob < lowest:
+					lowest = ob
+				if ob > highest:
+					highest = ob
+					
+			dif = highest - lowest
 			
-			n[x][y][0] = (0.11111) * total
-			
-			list = []
-			
-			list.append(m[x][y][1][1]) 
-			list.append(m[x][wrap(y,own['verts'])][1][1]) 
-			list.append(m[wrap(x,own['verts'])][y][1][1])
-			list.append(m[wrap(x,own['verts'])][wrap(y,own['verts'])][1][1])
-			list.append(m[x-1][y][1][1])
-			list.append(m[wrap(x,own['verts'])][y-1][1][1])
-			list.append(m[x-1][wrap(y,own['verts'])][1][1])
-			list.append(m[x][y-1][1][1])
-			list.append(m[x-1][y-1][1][1])
-			
-			total = 0
-			
-			for ob in list:
-				total += ob 
-			
-			n[x][y][1][1] = (0.11111) * total
-			
-			
-			
-	for x in range(0,own['verts']):
-		for y in range(0,own['verts']): 
-			m[x][y][0] = n[x][y][0]
-			m[x][y][1][1] = n[x][y][1][1]
+			if dif > own['threshold']:
+				m[x][y][1][0] = 1.0
+				
+	return m
+
+
 	
 ##############################################################################		
 #####   The main code for handling the order of proceses
@@ -231,7 +322,7 @@ def main():
 	blend_amount = own['h_smooth']
 	
 	for i in range(0,blend_amount):
-		vert_blend(m)			
+		m = vert_blend(m)			
 	
 	for i in range(0,own['valley']):
 		m = river_maker_2(m)
@@ -239,7 +330,20 @@ def main():
 	blend_amount = own['v_smooth']
 	
 	for i in range(0,blend_amount):
-		vert_blend(m)
+		m = vert_blend(m)
+		m = col_blend(m,1)
+	
+	if own['t_amount'] > 0.0:
+		m = terrace(m)
+		blend_amount = own['t_smooth']
+		for i in range(0,blend_amount):
+			m = vert_blend(m)
+	
+	m = slopes(m)
+	
+	m = col_blend(m,0)
+	m = col_blend(m,1)
+	m = col_blend(m,2)	
 
 	set_verts(m)
 	own.reinstancePhysicsMesh(own, mesh)
